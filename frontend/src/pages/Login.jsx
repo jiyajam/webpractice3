@@ -17,8 +17,8 @@ const Login = ({ setIsAuthenticated }) => {
     })
     if (success) {
       console.log('Login successful')
-      //   setIsAuthenticated(true)
-      localStorage.setItem('token', success.token)
+      setIsAuthenticated(true)
+      //   localStorage.setItem('token', success.token)
       navigate('/')
     }
   }

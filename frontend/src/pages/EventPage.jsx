@@ -7,11 +7,14 @@ const EventPage = () => {
   const [event, setEvent] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const user = JSON.parse(localStorage.getItem('user'))
+  const token = user ? user.token : null
 
   const deleteEvent = async (id) => {
     try {
       const res = await fetch(`/api/events/${id}`, {
         method: 'DELETE',
+        Authorization: `Bearer ${token}`,
       })
       if (!res.ok) {
         throw new Error('Failed to delete event')

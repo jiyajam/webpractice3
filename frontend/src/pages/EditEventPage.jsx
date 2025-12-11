@@ -2,13 +2,17 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 
 const EditEventPage = () => {
-  const [event, setEvent] = useState(null) // Event data
+  const [event, setEvent] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+
   const { id } = useParams()
   const navigate = useNavigate()
 
-  // Form fields state
+  const user = JSON.parse(localStorage.getItem('user'))
+  const token = user ? user.token : null
+
+  // Event fields
   const [title, setTitle] = useState('')
   const [date, setDate] = useState('')
   const [location, setLocation] = useState('')
@@ -16,49 +20,68 @@ const EditEventPage = () => {
   const [contactEmail, setContactEmail] = useState('')
   const [contactPhone, setContactPhone] = useState('')
 
+  // PUT /events/:id
+  const updateEvent = async (updatedEvent) => {
+    try {
+      const res = await fetch(`/api/events/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedEvent),
+      })
+
+      if (!res.ok) {
+        throw new Error('Failed to update event')
+      }
+      return true
+    } catch (error) {
+      console.error('Error updating event:', error)
+      return false
+    }
+  }
+
   // Fetch event data
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const res = await fetch(`/api/events/${id}`)
-        if (!res.ok) throw new Error('Failed to fetch event')
+        const res = await fetch(`/api/events/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+
+        if (!res.ok) {
+          throw new Error('Failed to fetch event')
+        }
+
         const data = await res.json()
         setEvent(data)
+        const formatDate = (isoDate) => {
+          if (!isoDate) return ''
+          return isoDate.split('T')[0] // "2025-12-20"
+        }
 
-        // Populate form fields
+        // Fill form fields
         setTitle(data.title)
-        setDate(new Date(data.date).toISOString().slice(0, 10)) // format YYYY-MM-DD
+        setDate(formatDate(data.date))
         setLocation(data.location)
-        setOrganizerName(data.organizer.name)
-        setContactEmail(data.organizer.contactEmail)
-        setContactPhone(data.organizer.contactPhone)
-      } catch (err) {
-        console.error(err)
-        setError(err.message)
+        setOrganizerName(data.organizerName)
+        setContactEmail(data.contactEmail)
+        setContactPhone(data.contactPhone)
+      } catch (error) {
+        console.error('Fetch event error:', error)
+        setError(error.message)
       } finally {
         setLoading(false)
       }
     }
 
     fetchEvent()
-  }, [id])
+  }, [id, token])
 
-  // Update event function
-  const updateEvent = async (updatedEvent) => {
-    try {
-      const res = await fetch(`/api/events/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedEvent),
-      })
-      if (!res.ok) throw new Error('Failed to update event')
-      return true
-    } catch (err) {
-      console.error(err)
-      return false
-    }
-  }
-
+  // Submit handler
   const submitForm = async (e) => {
     e.preventDefault()
 
@@ -66,23 +89,26 @@ const EditEventPage = () => {
       title,
       date,
       location,
-      organizer: {
-        name: organizerName,
-        contactEmail,
-        contactPhone,
-      },
+      organizerName,
+      contactEmail,
+      contactPhone,
     }
 
     const success = await updateEvent(updatedEvent)
-    if (success) navigate(`/events/${id}`)
-  }
 
-  if (loading) return <p>Loading...</p>
-  if (error) return <p>{error}</p>
+    if (success) {
+      console.log('Event Updated Successfully')
+      navigate(`/events/${id}`)
+    } else {
+      console.error('Update failed')
+    }
+  }
 
   return (
     <div className='create'>
-      <h2>Edit Event</h2>
+      <h2>Update Event</h2>
+
+      <h2>Add a New Event</h2>
 
       <form onSubmit={submitForm}>
         <label>Event Title:</label>
@@ -111,7 +137,7 @@ const EditEventPage = () => {
 
         <h3>Organizer Information</h3>
 
-        <label>Name:</label>
+        <label>Organizer Name:</label>
         <input
           type='text'
           required
@@ -135,7 +161,7 @@ const EditEventPage = () => {
           onChange={(e) => setContactPhone(e.target.value)}
         />
 
-        <button>Edit Event</button>
+        <button>Edit</button>
       </form>
     </div>
   )

@@ -9,6 +9,8 @@ const AddEventPage = () => {
   const [organizerName, setOrganizerName] = useState('')
   const [contactEmail, setContactEmail] = useState('')
   const [contactPhone, setContactPhone] = useState('')
+  const user = JSON.parse(localStorage.getItem('user'))
+  const token = user ? user.token : null
 
   const navigate = useNavigate()
 
@@ -18,6 +20,7 @@ const AddEventPage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(newEvent),
       })

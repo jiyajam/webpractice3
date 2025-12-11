@@ -9,16 +9,17 @@ const eventSchema = new mongoose.Schema({
     contactEmail: { type: String, required: true },
     contactPhone: { type: String, required: true },
   },
+  userId: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
 })
 
-// //add  virtual field id
-// eventSchema.set('toJSON', {
-//   virtuals: true,
-//   transform: (doc, ret) => {
-//     ret.id = ret._id;
-//     return ret;
-//   }
-// });
+//add  virtual field id
+eventSchema.set('toJSON', {
+  virtuals: true,
+  transform: (doc, ret) => {
+    ret.id = ret._id
+    return ret
+  },
+})
 
 const Event = mongoose.model('Event', eventSchema)
 

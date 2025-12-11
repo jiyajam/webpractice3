@@ -16,18 +16,53 @@ const App = () => {
     const user = JSON.parse(localStorage.getItem('user'))
     return user && user.token ? true : false
   })
+
   return (
     <div className='App'>
       <BrowserRouter>
-        <Navbar />
+        <Navbar
+          isAuthenticated={isAuthenticated}
+          setIsAuthenticated={setIsAuthenticated}
+        />
         <div className='content'>
           <Routes>
             <Route path='/' element={<Home />} />
-            <Route path='/events/:id' element={<EventPage />} />
-            <Route path='/events/add-event' element={<AddEventPage />} />
-            <Route path='/edit-event/:id' element={<EditEventPage />} />
-            <Route path='/signup' element={<Signup />} />
-            <Route path='/login' element={<Login />} />
+            <Route
+              path='/events/:id'
+              element={<EventPage isAuthenticated={isAuthenticated} />}
+            />
+            <Route
+              path='/events/add-event'
+              element={
+                isAuthenticated ? <AddEventPage /> : <Navigate to='/signup' />
+              }
+            />
+            <Route
+              path='/edit-event/:id'
+              element={
+                isAuthenticated ? <EditEventPage /> : <Navigate to='/signup' />
+              }
+            />
+            <Route
+              path='/signup'
+              element={
+                isAuthenticated ? (
+                  <Navigate to='/' />
+                ) : (
+                  <Signup setIsAuthenticated={setIsAuthenticated} />
+                )
+              }
+            />
+            <Route
+              path='/login'
+              element={
+                isAuthenticated ? (
+                  <Navigate to='/' />
+                ) : (
+                  <Login setIsAuthenticated={setIsAuthenticated} />
+                )
+              }
+            />
             <Route path='*' element={<NotFoundPage />} />
           </Routes>
         </div>

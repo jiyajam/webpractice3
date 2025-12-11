@@ -1,95 +1,112 @@
-const Event = require('../models/eventModel')
 const mongoose = require('mongoose')
+const Event = require('../models/eventModel')
 
-//GET / events;
+// GET /events — Get all events belonging to the logged-in user
 const getAllEvents = async (req, res) => {
   try {
-    const events = await Event.find({}).sort({ createdAt: -1 })
+    const events = await Event.find({}).sort({
+      createdAt: -1,
+    })
     res.status(200).json(events)
   } catch (error) {
-    res.status(500).json({ message: 'Failed to retrieve events' })
+    console.error('Error fetching events:', error)
+    res.status(500).json({ error: 'Server Error' })
   }
 }
 
-// POST /events
+// POST /events — Create a new event (protected)
 const createEvent = async (req, res) => {
   try {
-    const newEvent = await Event.create({ ...req.body })
+    const userId = req.user._id
+
+    const newEvent = new Event({
+      ...req.body,
+      userId,
+    })
+
+    await newEvent.save()
     res.status(201).json(newEvent)
   } catch (error) {
-    res
-      .status(400)
-      .json({ message: 'Failed to create event', error: error.message })
+    console.error('Error creating event:', error)
+    res.status(500).json({ error: 'Server Error' })
   }
 }
 
-// GET /events/:eventId
+// GET /events/:eventId — Get event by ID (only if it belongs to the user)
 const getEventById = async (req, res) => {
   const { eventId } = req.params
-
   if (!mongoose.Types.ObjectId.isValid(eventId)) {
-    return res.status(400).json({ message: 'Invalid event ID' })
+    return res.status(404).json({ error: 'No such event' })
   }
 
   try {
     const event = await Event.findById(eventId)
-    if (event) {
-      res.status(200).json(event)
-    } else {
-      res.status(404).json({ message: 'Event not found' })
+    if (!event) {
+      console.log('Event not found')
+      return res.status(404).json({ message: 'Event not found' })
     }
+    res.status(200).json(event)
   } catch (error) {
-    res.status(500).json({ message: 'Failed to retrieve event' })
+    console.error('Error fetching event:', error)
+    res.status(500).json({ error: 'Server Error' })
   }
 }
 
-// PUT /events/:eventId
+// PUT /events/:eventId — Update event by ID (protected + owner only)
 const updateEvent = async (req, res) => {
   const { eventId } = req.params
 
   if (!mongoose.Types.ObjectId.isValid(eventId)) {
-    return res.status(400).json({ message: 'Invalid event ID' })
+    return res.status(404).json({ error: 'No such event' })
   }
 
   try {
     const updatedEvent = await Event.findOneAndUpdate(
-      { _id: eventId },
+      { _id: eventId, userId: req.user._id },
       { ...req.body },
       { new: true }
     )
-    if (updatedEvent) {
-      res.status(200).json(updatedEvent)
-    } else {
-      res.status(404).json({ message: 'Event not found' })
+
+    if (!updatedEvent) {
+      return res.status(404).json({ message: 'Event not found' })
     }
+
+    res.status(200).json(updatedEvent)
   } catch (error) {
-    res.status(500).json({ message: 'Failed to update event' })
+    console.error('Error updating event:', error)
+    res.status(500).json({ error: 'Server Error' })
   }
 }
-// // DELETE /events/:eventId
+
+// DELETE /events/:eventId — Delete event by ID (protected + owner only)
 const deleteEvent = async (req, res) => {
   const { eventId } = req.params
 
   if (!mongoose.Types.ObjectId.isValid(eventId)) {
-    return res.status(400).json({ message: 'Invalid event ID' })
+    return res.status(404).json({ error: 'No such event' })
   }
 
   try {
-    const deletedEvent = await Event.findOneAndDelete({ _id: eventId })
-    if (deletedEvent) {
-      res.status(204).send() // 204 No Content
-    } else {
-      res.status(404).json({ message: 'Event not found' })
+    const deletedEvent = await Event.findOneAndDelete({
+      _id: eventId,
+      userId: req.user._id,
+    })
+
+    if (!deletedEvent) {
+      return res.status(404).json({ message: 'Event not found' })
     }
+
+    res.status(204).send() // No Content
   } catch (error) {
-    res.status(500).json({ message: 'Failed to delete event' })
+    console.error('Error deleting event:', error)
+    res.status(500).json({ error: 'Server Error' })
   }
 }
 
 module.exports = {
   getAllEvents,
-  getEventById,
   createEvent,
+  getEventById,
   updateEvent,
   deleteEvent,
 }

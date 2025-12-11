@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const app = express()
 const eventRouter = require('./routes/eventRouter')
+const userRouter = require('./routes/userRouter')
 const {
   unknownEndpoint,
   errorHandler,
@@ -17,6 +18,8 @@ connectDB()
 
 // Use the eventRouter for all "/events" routes
 app.use('/api/events', eventRouter)
+// Use the userRouter for all "/events" routes
+app.use('/api/users', userRouter)
 
 app.use(unknownEndpoint)
 app.use(errorHandler)

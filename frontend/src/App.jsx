@@ -1,9 +1,10 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 // pages & components
+import Navbar from './components/Navbar'
 import Home from './pages/HomePage'
 import AddEventPage from './pages/AddEventPage'
-import Navbar from './components/Navbar'
+import EventPage from './pages/EventPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 const App = () => {
@@ -14,7 +15,8 @@ const App = () => {
         <div className='content'>
           <Routes>
             <Route path='/' element={<Home />} />
-            <Route path='/add-event' element={<AddEventPage />} />
+            <Route path='/events/add-event' element={<AddEventPage />} />
+            <Route path='/events/:id' element={<EventPage />} />
             <Route path='*' element={<NotFoundPage />} />
           </Routes>
         </div>

@@ -1,6 +1,10 @@
 import { Link } from 'react-router-dom'
 
 const EventListings = ({ events }) => {
+  if (!events || events.length === 0) {
+    return <p>No events available.</p>
+  }
+
   return (
     <div className='event-list'>
       {events.map((event) => (
@@ -8,7 +12,7 @@ const EventListings = ({ events }) => {
           <Link to={`/events/${event._id}`}>
             <h2>{event.title}</h2>
           </Link>
-          <p>Date: {event.date}</p>
+          <p>Date: {new Date(event.date).toLocaleDateString()}</p>
           <p>Organizer: {event.organizer.name}</p>
         </div>
       ))}

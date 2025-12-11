@@ -1,18 +1,18 @@
 const express = require('express')
 const {
   getAllEvents,
-  // getEventById,
+  getEventById,
   createEvent,
   // updateEvent,
-  // deleteEvent,
+  deleteEvent,
 } = require('../controllers/eventControllers')
 
 const router = express.Router()
 
 router.get('/', getAllEvents)
 router.post('/', createEvent)
-// router.get("/:eventId", getEventById);
-// router.put("/:eventId", updateEvent);
-// router.delete("/:eventId", deleteEvent);
+router.get('/:eventId', getEventById)
+// router.put('/:eventId', updateEvent)
+router.delete('/:eventId', deleteEvent)
 
 module.exports = router

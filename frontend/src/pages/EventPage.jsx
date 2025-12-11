@@ -66,7 +66,10 @@ const EventPage = () => {
           <p>Name: {event.organizer.name}</p>
           <p>Email: {event.organizer.contactEmail}</p>
           <p>Phone: {event.organizer.contactPhone}</p>
-          <button onClick={() => onDeleteClick(event._id)}>Delete Event</button>
+          <button onClick={() => onDeleteClick(event._id)}>Delete</button>
+          <button onClick={() => navigate(`/edit-event/${event._id}`)}>
+            Edit
+          </button>
         </>
       )}
     </div>

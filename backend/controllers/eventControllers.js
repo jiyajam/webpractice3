@@ -43,11 +43,29 @@ const getEventById = async (req, res) => {
   }
 }
 
-// // PUT /events/:eventId
-// const updateEvent = async (req, res) => {
-//   res.send("updateEvent");
-// };
+// PUT /events/:eventId
+const updateEvent = async (req, res) => {
+  const { eventId } = req.params
 
+  if (!mongoose.Types.ObjectId.isValid(eventId)) {
+    return res.status(400).json({ message: 'Invalid event ID' })
+  }
+
+  try {
+    const updatedEvent = await Event.findOneAndUpdate(
+      { _id: eventId },
+      { ...req.body },
+      { new: true }
+    )
+    if (updatedEvent) {
+      res.status(200).json(updatedEvent)
+    } else {
+      res.status(404).json({ message: 'Event not found' })
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update event' })
+  }
+}
 // // DELETE /events/:eventId
 const deleteEvent = async (req, res) => {
   const { eventId } = req.params
@@ -72,6 +90,6 @@ module.exports = {
   getAllEvents,
   getEventById,
   createEvent,
-  // updateEvent,
+  updateEvent,
   deleteEvent,
 }

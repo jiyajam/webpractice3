@@ -3,7 +3,7 @@
 /* base styles */
 * {
   margin: 0;
-  font-family: "Quicksand";
+  font-family: 'Quicksand';
   color: #333;
 }
 .navbar {
@@ -34,9 +34,9 @@
   padding: 20px;
 }
 
-/* job previews / list */
+/* event previews / list */
 
-.job-list {
+.event-list {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -44,7 +44,7 @@
   background-color: #f9f9f9;
 }
 
-.job-preview {
+.event-preview {
   padding: 15px;
   border: 1px solid #ddd;
   border-radius: 5px;
@@ -53,39 +53,39 @@
   transition: box-shadow 0.3s ease;
 }
 
-.job-preview:hover {
+.event-preview:hover {
   box-shadow: 1px 3px 5px rgba(41, 20, 156, 0.1);
 }
 
-.job-preview h2 {
+.event-preview h2 {
   margin: 0 0 10px;
   font-size: 1.5em;
   color: #f1356d;
 }
 
-.job-preview p {
+.event-preview p {
   margin: 5px 0;
   color: #666;
 }
 
-.job-preview p span {
+.event-preview p span {
   font-weight: bold;
 }
 
-.job-preview a{
+.event-preview a {
   text-decoration: none;
 }
 
-/* job details page */
-.job-details h2 {
+/* event details page */
+.event-details h2 {
   font-size: 20px;
   color: #f1356d;
   margin-bottom: 10px;
 }
-.job-details div {
+.event-details div {
   margin: 20px 0;
 }
-.job-details button {
+.event-details button {
   background: #f1356d;
   color: #fff;
   border: 0;
@@ -94,7 +94,7 @@
   cursor: pointer;
 }
 
-/* create new job form */
+/* create new event form */
 .create {
   max-width: 400px;
   margin: 0 auto;
@@ -109,7 +109,9 @@
   color: #f1356d;
   margin-bottom: 30px;
 }
-.create input, .create textarea, .create select {
+.create input,
+.create textarea,
+.create select {
   width: 100%;
   padding: 6px 10px;
   margin: 10px 0;

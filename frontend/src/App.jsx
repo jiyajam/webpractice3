@@ -12,6 +12,10 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 
 const App = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    const user = JSON.parse(localStorage.getItem('user'))
+    return user && user.token ? true : false
+  })
   return (
     <div className='App'>
       <BrowserRouter>

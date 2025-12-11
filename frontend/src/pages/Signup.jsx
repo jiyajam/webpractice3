@@ -11,13 +11,13 @@ const Signup = () => {
   const date_of_birth = useField('date')
   const occupation = useField('text')
   const phone = useField('text')
-  const membershipStatus = useField('text')
 
   const { signup, error } = useSignup('/api/users/signup')
 
   const handleFormSubmit = async (e) => {
     e.preventDefault()
-    await signup({
+
+    const userData = {
       email: email.value,
       password: password.value,
       name: name.value,
@@ -25,9 +25,13 @@ const Signup = () => {
       date_of_birth: date_of_birth.value,
       occupation: occupation.value,
       phone: phone.value,
-    })
-    if (!error) {
-      console.log('success')
+    }
+    console.log('Sending signup data:', userData)
+    const success = await signup(userData)
+
+    if (success) {
+      //   setIsAuthenticated(true)
+      localStorage.setItem('token', success.token)
       navigate('/')
     }
   }
@@ -42,6 +46,7 @@ const Signup = () => {
         <input {...email} />
         <label>Password:</label>
         <input {...password} />
+
         <label>Gender:</label>
         <input {...gender} />
         <label>Date of Birth:</label>
